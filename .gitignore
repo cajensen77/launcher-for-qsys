@@ -1,0 +1,8 @@
+# Never upload personal data: the Core list, logins, logs and backups live in
+# %AppData%\QSysLauncher, but keep copies out of the repository just in case.
+systems.json
+*.log
+api-probe.txt
+designer-ui-dump.txt
+backups/
+*.zip
