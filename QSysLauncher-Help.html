@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Launcher for Q-SYS - Help</title>
+<style>
+  :root { --ink:#1f2933; --muted:#5f6b7a; --line:#e3e7ec; --accent:#2b5c8a; --soft:#f4f7fa; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.55 "Segoe UI", system-ui, sans-serif; color:var(--ink); background:#fff; }
+  header { background:var(--accent); color:#fff; padding:22px 32px; }
+  header h1 { margin:0; font-size:24px; font-weight:600; }
+  header p  { margin:4px 0 0; opacity:.85; }
+  .wrap { display:flex; max-width:1150px; margin:0 auto; }
+  nav { width:230px; flex:none; padding:22px 16px; border-right:1px solid var(--line); position:sticky; top:0; align-self:flex-start; max-height:100vh; overflow:auto; }
+  nav a { display:block; color:var(--muted); text-decoration:none; padding:3px 6px; border-radius:4px; font-size:14px; }
+  nav a:hover { background:var(--soft); color:var(--accent); }
+  main { padding:22px 36px 60px; min-width:0; }
+  h2 { font-size:20px; margin:34px 0 8px; padding-bottom:6px; border-bottom:1px solid var(--line); color:var(--accent); }
+  h2:first-child { margin-top:0; }
+  h3 { font-size:16px; margin:20px 0 6px; }
+  table { border-collapse:collapse; width:100%; margin:8px 0 14px; font-size:14px; }
+  th, td { text-align:left; vertical-align:top; padding:6px 10px; border-bottom:1px solid var(--line); }
+  th { background:var(--soft); font-weight:600; }
+  td:first-child { white-space:nowrap; font-weight:600; }
+  code, kbd { font-family:Consolas, monospace; font-size:13px; background:var(--soft); padding:1px 5px; border-radius:3px; }
+  kbd { border:1px solid var(--line); }
+  .note { background:#fff8e6; border-left:4px solid #e0a800; padding:10px 14px; margin:12px 0; border-radius:3px; }
+  .tip  { background:#eef6ff; border-left:4px solid var(--accent); padding:10px 14px; margin:12px 0; border-radius:3px; }
+  ol li, ul li { margin:3px 0; }
+  .muted { color:var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Launcher for Q-SYS</h1>
+  <p>An address book and launcher for Q-SYS Designer: your Cores, the right Designer version, hard links that keep themselves up to date, and a live list of the Q-SYS devices on your AV network.</p>
+  <p style="font-size:13px;opacity:.75;margin-top:8px">Independent community tool. Not made, endorsed or supported by QSC, LLC. Q-SYS is a trademark of QSC, LLC.</p>
+</header>
+
+<div class="wrap">
+<nav>
+  <a href="#start">Getting started</a>
+  <a href="#auto">What happens automatically</a>
+  <a href="#window">The main window</a>
+  <a href="#columns">Columns</a>
+  <a href="#devices">Devices tab (live discovery)</a>
+  <a href="#menus">Menus</a>
+  <a href="#tray">Tray icon</a>
+  <a href="#launch">Launching Designer</a>
+  <a href="#links">Hard links (LAN A / LAN B)</a>
+  <a href="#moved">When a Core's address changes</a>
+  <a href="#network">Network and security notes</a>
+  <a href="#firmware">Firmware and Core login</a>
+  <a href="#shared">Sharing one list with a team</a>
+  <a href="#options">Options</a>
+  <a href="#files">Files and where they live</a>
+  <a href="#trouble">Troubleshooting</a>
+</nav>
+
+<main>
+
+<h2 id="start">Getting started</h2>
+<ol>
+  <li>Keep <code>QSysLauncher.ps1</code>, <code>Start QSys Launcher.cmd</code>, <code>QSysLauncher.ico</code> and this help file together in one folder (for example <code>Documents\QSysLauncher</code>).</li>
+  <li>Double-click <b>Start QSys Launcher.cmd</b>. It uses the PowerShell that comes with Windows &mdash; nothing to install.</li>
+  <li>The first time, it imports the hard links you already have in Designer and starts checking every Core. If you have none yet, a welcome panel shows how to add Cores &mdash; the easiest way is the <b>Devices</b> tab, where Cores on your AV network appear by themselves.</li>
+  <li>To read firmware from Cores that have Access Control turned on, set a <b>Core login</b> once: <b>Tools &gt; Core login...</b></li>
+  <li>Optional: <b>Tools &gt; Options &gt; Start with Windows</b> so it's always running in the tray, and <b>File &gt; Create desktop shortcut</b> for a shortcut with the app's icon.</li>
+  <li>The first time it listens for devices, Windows may ask whether <b>PowerShell</b> may use the network. Allow it on <b>Private</b> networks so the Devices tab can hear announcements.</li>
+</ol>
+<div class="tip">The window title and the bottom-right corner show the version that's running (for example <b>v0.22</b>).
+The app has its own taskbar button and icon; right-click it &gt; <b>Pin to taskbar</b> to keep it there.
+Starting the launcher again from the .cmd replaces an older copy that's still running, so after an update you always get the new version.</div>
+
+<h2 id="auto">What happens automatically</h2>
+<p>The launcher <b>listens</b>; it doesn't knock. Talking to a Core over the network (Remote Control on port 1710, or Core Manager for firmware) adds <i>client connected / closed</i> lines, and sometimes a sign-in, to that Core's event log. So by default it only talks to a Core when you ask. Every 5 minutes, with no buttons to press:</p>
+<ol>
+  <li><b>New Designer versions</b> are picked up from <code>C:\Program Files\QSC</code>.</li>
+  <li><b>Hard links added inside Designer</b> are imported into your list.</li>
+  <li><b>Cores are followed from their announcements</b> on LAN A (QDP), which leave no trace on the Core: <i>Heard on LAN A</i> or <i>Not heard</i>, name, LAN A and LAN B addresses. A new LAN B address updates the row and the hard links right away. New Cores are added (see <a href="#autoadd">Adding Cores automatically</a>).</li>
+  <li><b>Designer's hard links are rewritten</b> if anything changed. If Designer is open, this waits until Designer closes.</li>
+</ol>
+<p><b>When the launcher talks to Cores</b> (and so shows in their logs):</p>
+<ul>
+  <li><b>Check all now</b> (<kbd>F5</kbd>): every Core on port 1710 (design, state, model). Firmware is read from Core Manager only where something could have changed (see <a href="#firmware">Firmware</a>).</li>
+  <li><b>Check now</b> on selected rows (right-click): those Cores, including firmware.</li>
+  <li><b>Launching</b> a Core whose firmware isn't known yet, or that went quiet since its last check (a firmware update means a reboot): that one Core is checked first, then Designer opens.</li>
+  <li><b>Options &gt; Check Cores over the network</b>: set it to every 30 min, 60 min or 4 hours if you want automatic checks anyway. The default is <i>Only when I ask</i>.</li>
+</ul>
+
+<h2 id="window">The main window</h2>
+<ul>
+  <li><b>Search</b> filters by name, group, either IP, design, model or notes.</li>
+  <li><b>Launch Designer</b> opens the Designer version that matches the selected Core's firmware. Double-clicking a grey column does the same.</li>
+  <li><b>+ / &minus;</b> under the list add a Core (type a name and its LAN B IP; everything else fills in on the next check) or remove the selected ones.</li>
+  <li><b>Check all now</b> (<kbd>F5</kbd>) checks every Core over the network (see <a href="#auto">What happens automatically</a>).</li>
+  <li><b>Right-click a row</b> for: Launch, Open Core Manager, Check now (incl. firmware), Trust this Core's new certificate, Remove.</li>
+  <li><b>Installed Q-SYS Designer</b> (right side): every version on this PC. Double-click or <b>Launch this version</b> to open it without a Core.</li>
+  <li>The <b>status bar</b> at the bottom shows the last check; the full detail is in <b>View &gt; Log</b>.</li>
+  <li>Columns size themselves to fit their contents. Drag a column edge to resize it, or double-click the edge to re-fit.</li>
+  <li>The main window and the Log window <b>remember their size and position</b> (and whether they were maximized). If that spot is no longer on any monitor, they open centered instead.</li>
+</ul>
+
+<h2 id="columns">Columns</h2>
+<p>White columns are yours to edit. Grey columns are filled in automatically.</p>
+<table>
+  <tr><th>Column</th><th>What it is</th></tr>
+  <tr><td>On</td><td>Whether this hard link is enabled in Designer (and whether the Core is checked).</td></tr>
+  <tr><td>Name</td><td>Your label. Sent to Designer 10.5+ as the hard-link name. Hover to see the Core's own name (e.g. <code>SantaSusana-Core</code>).</td></tr>
+  <tr><td>Group</td><td>Building, floor, department... Click into the cell for a drop-down of your groups, or type a new one (it's added to the list). Set groups up ahead of time in <b>Edit &gt; Groups</b>. The tray menu shows Cores in submenus by group.</td></tr>
+  <tr><td>LAN B IP</td><td>The Core's campus (DHCP) address. This is the one that can change.</td></tr>
+  <tr><td>LAN A IP</td><td>The Core's AV-network (static) address. Filled in from the Core itself.</td></tr>
+  <tr><td>Core Model</td><td>Core 110f, NV-32-H (Core Mode), Core Nano, ...</td></tr>
+  <tr><td>Firmware</td><td>The Core's firmware version, e.g. 10.4.1.</td></tr>
+  <tr><td>Designer</td><td><b style="color:#1E8449">OK</b> = the exact Designer version is installed. <b style="color:#B9770E">Patch</b> = same 10.x but a different patch. <b style="color:#C0392B">Missing</b> = not installed. Hover for the versions involved.</td></tr>
+  <tr><td>Design Name</td><td>The design running on the Core. Used to recognize the Core, and typed into Designer's F8 search.</td></tr>
+  <tr><td>State</td><td><i>Heard on LAN A</i> / <i>Not heard</i> (from announcements), or Active / Standby / No response after a check. Hover to see when it was last checked.</td></tr>
+  <tr><td>Notes</td><td>Anything you like.</td></tr>
+</table>
+
+<h2 id="devices">Devices tab (live discovery)</h2>
+<p>Every Q-SYS Core and peripheral announces itself about once a second (Q-SYS Discovery Protocol, QDP). The <b>Devices (LAN A)</b> tab listens for those announcements and builds a live list &mdash; nothing to type in.</p>
+<ul>
+  <li>It listens only on the network card that's on your <b>LAN A</b> (AV) network, so Q-SYS gear on other networks (e.g. another department's, on a shared building network) isn't shown.</li>
+  <li>You don't have to tell it which network that is: until it knows, it listens on every network, and the first Core it checks (or the first device it hears) tells it the LAN A range. You can override it in Options.</li>
+  <li><b>Name</b> is the device's network name as it announces it &mdash; devices report these in lowercase. Cores that are in your list show their proper name instead.</li>
+  <li><b>Kind</b> (Core, Touch screen, Amplifier, Video endpoint, Camera, I/O, Speaker, Paging station...) is worked out from the model number, because the type a device announces is coarse (most peripherals just say "ioframe"). Hover to see the raw type.</li>
+  <li><b>Status</b>: <i>Live</i> = heard in the last 15 seconds; <i>Not live</i> = it stopped announcing (off, unplugged, or rebooting). Hover <i>Not live</i> to see when it was last heard.</li>
+  <li><b>In Cores list as</b>: for a Core, the name of its row on the Cores tab. Blank = that Core isn't in your list yet (see <a href="#autoadd">Adding Cores automatically</a>).</li>
+  <li><b>Right-click</b>: Open web page &middot; Copy IP address &middot; <b>Add this Core to my Cores</b> &middot; <b>Add all Cores not in my list</b> &middot; Forget devices not heard now.</li>
+  <li>Cores in your list are kept current from their announcements: the Core's own name is filled in, and if a Core announces a <b>new LAN B address</b>, the row and Designer's hard links update immediately.</li>
+  <li><b>Cameras:</b> NC Series cameras announce themselves and appear automatically. The older <b>PTZ-IP</b> cameras use a different method (WS-Discovery); turn on <b>Options &gt; Also find PTZ-IP cameras</b> to include them. The launcher then asks the AV network while the Devices tab is open (at most every 5 minutes) and shows only cameras that identify as QSC / Q-SYS (other brands are skipped, and noted once in the log).</li>
+</ul>
+
+<h3 id="autoadd">Adding Cores automatically</h3>
+<p>Each Core's announcement already carries its name, LAN A address and LAN B address, so with <b>Options &gt; Automatically add Cores heard on LAN A to my Cores list</b> on (the default), Cores you haven't entered are added by themselves &mdash; and, with auto-sync on, go straight into Designer's hard links. Even if your PC talks to the Cores on LAN B, it can hear them on LAN A.</p>
+<ul>
+  <li><b>Only your AV network:</b> a Core is added only if its LAN A address is inside your LAN A range. Until that range is known, nothing is added.</li>
+  <li><b>Not emulators:</b> Cores that announce themselves as virtual or emulated are never added.</li>
+  <li><b>Removed means removed:</b> removing a Core puts it on a removed list, so it isn't added back. On a shared list the whole team shares the removed list. To bring one back, right-click it on the Devices tab &gt; <b>Add this Core</b>, or press <b>Allow them again</b> in Options to clear the list.</li>
+  <li><b>Few logins:</b> filling in the row needs no login. Firmware isn't in the announcement, so each newly added Core gets <b>one</b> Core Manager read; after that the usual rules apply (a login only when a new design is pushed or the Core was down).</li>
+  <li>New Cores are collected and checked together, with one tray note listing them. Rows are named from the announcement, then given the Core's proper upper/lower case when the check comes back. Rename them freely.</li>
+  <li>Nothing is added in the first 2 minutes after the launcher starts, so the startup check can recognize Cores you already have.</li>
+  <li><b>Add all Cores not in my list</b> (right-click on the Devices tab) does the same in one go, for when the option is off. The log says which Cores it skipped and why.</li>
+</ul>
+
+<h2 id="menus">Menus</h2>
+<table>
+  <tr><th>Menu</th><th>Items</th></tr>
+  <tr><td>File</td><td><b>Check all Cores now</b> (F5) &middot; <b>Sync hard links to Designer (with preview)</b> &mdash; shows what will be added/removed first &middot; <b>Open data folder</b> &middot; <b>Create desktop shortcut</b> &middot; <b>Exit</b> &mdash; really quits (also leaves the tray).</td></tr>
+  <tr><td>Right-click a Core</td><td>Launch matching Designer &middot; Open Core Manager &middot; Check now &middot; Trust this Core's new certificate &middot; <b>Core login for this Core</b> &middot; Remove.</td></tr>
+  <tr><td>Edit</td><td><b>Add Core</b> &middot; <b>Groups...</b> &mdash; add, rename (updates every Core in the group) or remove groups &middot; <b>Remove selected</b> (Del) &mdash; removes from the list and from Designer's hard links, after asking &middot; <b>Check selected now (incl. firmware)</b> &middot; <b>Open Core Manager</b>.</td></tr>
+  <tr><td>View</td><td><b>Log</b> (Ctrl+L) &mdash; a separate, resizable window; closing it just hides it.</td></tr>
+  <tr><td>Tools</td><td><b>Core login...</b> &middot; <b>Find firmware API</b> (diagnostic) &middot; <b>Dump Designer UI</b> (diagnostic for the F8 automation) &middot; <b>Options...</b></td></tr>
+  <tr><td>Help</td><td><b>Help</b> (F1) &mdash; this page &middot; <b>About</b> &mdash; version and file locations.</td></tr>
+</table>
+
+<h2 id="tray">Tray icon</h2>
+<ul>
+  <li><b>Left-click</b> opens the window. <b>Right-click</b>: your Cores (click one to launch its Designer), Designer versions, Log, Options, Check all Cores now, Exit.</li>
+  <li>The window's <b>X</b> keeps the launcher running in the tray (change this in Options). <b>Minimize</b> keeps it on the taskbar like any program.</li>
+</ul>
+<div class="note"><b>Don't see the icon?</b> Windows puts new tray icons in the hidden area. Click the <b>^</b> arrow next to the clock &mdash; it's there.
+Drag it onto the taskbar to keep it visible, or turn it on under Windows Settings &gt; Personalization &gt; Taskbar &gt; "Select which icons appear on the taskbar".
+You can also just run the .cmd again: it brings the running launcher back up.</div>
+
+<h2 id="launch">Launching Designer</h2>
+<p>Launch for a Core (button, double-click, right-click, or the tray menu) opens the Designer version matching that Core's firmware. Then, depending on <b>Options &gt; After Designer opens</b>:</p>
+<table>
+  <tr><th>Setting</th><th>What happens</th></tr>
+  <tr><td>Off</td><td>Just opens Designer.</td></tr>
+  <tr><td>Open dialog</td><td>Opens <i>File &gt; Load from Core &amp; Connect</i> once Designer is ready.</td></tr>
+  <tr><td>Select Core</td><td>...and selects this Core's row in the list, found by its <b>Core name</b> (e.g. <code>SantaSusana-Core</code>). Nothing is typed, so Designer's search box is left alone. You click Load. If the row can't be selected directly, it types the Core name into the search box instead.</td></tr>
+  <tr><td>Select + Load</td><td>...and clicks <i>Load From Selected Core</i> too (only when there's exactly one match).</td></tr>
+</table>
+<p><b>Timing:</b> a tray note appears as soon as you launch, and the status bar shows what Designer is doing (loading screen, busy...). F8 is pressed about a second after Designer is ready to use. Designer has no remote-control interface, so the launcher operates it through Windows' accessibility interface (UI Automation): it opens the menu item, selects the row and clicks Load directly &mdash; no mouse or keystrokes, and Designer doesn't need to be the window in front, so you can keep working elsewhere. One exception: Designer's menus close when its window isn't the active one, so if you're working in another window, the launcher brings Designer forward for a moment to open the menu item, then hands focus back to your window as soon as the dialog is up. Only if the menu can't be found at all does it press F8 instead.</p>
+<p>The Core name is also put on the clipboard, so <kbd>Ctrl</kbd>+<kbd>V</kbd> in the search box always works. If the F8 automation can't find the dialog, it saves <code>designer-ui-dump.txt</code> in the data folder for diagnosis.</p>
+
+<h2 id="links">Hard links (LAN A / LAN B)</h2>
+<p>Every installed Designer version reads the same two files: <code>%AppData%\QSC\HardLink.json</code> (addresses) and <code>HardLinkNames.json</code> (names, Designer 10.5+). The launcher keeps its own richer list and writes just the addresses and names into those files.</p>
+<ul>
+  <li><b>Options &gt; Core address to use</b>: <b>LAN B</b> (campus), <b>LAN A</b> (AV network), or <b>Both</b> (the LAN A link is named "Name [A]" in Designer). A row that only has one address always uses the one it has.</li>
+  <li><b>The launcher's list is in charge.</b> Remove Cores in the launcher (Edit &gt; Remove). If you delete a hard link inside Designer, the launcher puts it back on the next check.</li>
+  <li>Links you <b>add</b> inside Designer are imported automatically.</li>
+  <li>Every write keeps a backup of Designer's files in <code>backups</code> in the data folder (newest 20 kept).</li>
+</ul>
+
+<h2 id="moved">When a Core's address changes</h2>
+<p>LAN B addresses without DHCP reservations can change when a lease renews. Every Core announces its current LAN A and LAN B addresses on LAN A about once a second, so while the launcher is listening there, a new LAN B address updates the row and Designer's hard links within seconds, with a tray note. Nothing is scanned.</p>
+<p>Without a network card on LAN A, the launcher can't hear that. The Core shows <i>No response</i> on the next check: type its new address in the row (or remove it and add it again).</p>
+
+<h2 id="network">Network and security notes</h2>
+<ul>
+  <li><b>Listening</b> on LAN A only receives the announcements the Cores send anyway.</li>
+  <li><b>Which network card:</b> only the one on LAN A. If the LAN A range isn't known yet, the launcher first looks for a card on the same network as a LAN A address in your list. Failing that, it listens on every card for up to 5 minutes to hear a first Core, then stops. A PC with only a LAN A card, only a LAN B card, or both, all work. When cables or networks change (a laptop moving between rooms), it picks the card again within 15 seconds.</li>
+  <li><b>No scanning:</b> the launcher never sweeps address ranges. It only contacts Cores in your list, when you ask.</li>
+  <li><b>HTTPS certificates:</b> Cores use self-signed certificates. The launcher remembers each Core's certificate the first time it connects ("trust on first use", as SSH does) and afterwards only accepts that same one, so your Core login is never sent to something pretending to be the Core. If a Core is reset, replaced or re-imaged and gets a new certificate, the log and a tray note say so: right-click it &gt; <b>Trust this Core's new certificate</b>.</li>
+  <li><b>PTZ-IP cameras</b> (if turned on): the camera question goes out only while the Devices tab is open, at most every 5 minutes.</li>
+</ul>
+
+<h2 id="firmware">Firmware and Core login</h2>
+<p>Firmware comes from Core Manager (<code>/api/v0/cores/self</code>). Cores with Access Control need a login: <b>Tools &gt; Core login...</b> sets one login used for all Cores. If some Cores use a different login, right-click those Cores &gt; <b>Core login for this Core...</b> &mdash; you only maintain the exceptions. The password is stored encrypted for your Windows account only (Windows DPAPI) &mdash; never as plain text.</p>
+<p>To keep your Cores' event logs clean, the launcher only logs in when firmware could have changed:</p>
+<ul>
+  <li>it doesn't know the Core's firmware yet,</li>
+  <li>the Core's design code changed (a design was pushed &mdash; which always follows a firmware update), or</li>
+  <li>the Core just came back after not answering (it may have rebooted).</li>
+</ul>
+<p>Otherwise checks use port 1710 only, which needs no login. To force a fresh read, use <b>Edit &gt; Check selected now (incl. firmware)</b>.</p>
+
+<h2 id="shared">Sharing one list with a team</h2>
+<p>If two or three people look after the same system, point everyone's launcher at the same folder: <b>Tools &gt; Options &gt; Shared Core list folder</b> (a OneDrive/SharePoint folder or a network share).</p>
+<ul>
+  <li>The Core list lives in <code>LauncherForQSYS-cores.json</code> in that folder. Each PC also keeps its own copy, so the list is still there if the share is offline.</li>
+  <li>Changes are merged row by row: a Core someone adds appears for everyone, a Core someone removes disappears for everyone, and if two people edit the same Core, the most recent edit wins.</li>
+  <li><b>Not shared:</b> logins (passwords are encrypted for one Windows account and can't be moved), Options, and window positions. Each person sets their own Core login once.</li>
+  <li>Turning sharing on with a list already in the folder merges the two &mdash; nothing is lost. Clearing the folder keeps everything on your PC.</li>
+</ul>
+
+<h2 id="options">Options <span class="muted">(Tools &gt; Options)</span></h2>
+<table>
+  <tr><th>Option</th><th>What it does</th></tr>
+  <tr><td>Core address to use</td><td>LAN B / LAN A / Both &mdash; which address goes into Designer's hard links.</td></tr>
+  <tr><td>Link mode</td><td>UDP or HTTPS &mdash; the hard-link mode Designer stores. Leave on UDP unless you changed it in Designer.</td></tr>
+  <tr><td>Keep hard links in sync</td><td>Write Designer's files automatically when the list changes. Turn off to only write with File &gt; Sync.</td></tr>
+  <tr><td>After Designer opens</td><td>Off / Open dialog / Select Core / Select + Load (see <a href="#launch">Launching</a>).</td></tr>
+  <tr><td>Extra wait before F8</td><td>Seconds to wait after Designer is ready (default 1). The launcher watches Designer load &mdash; it waits until Designer is responding, its main window with the menu bar is up, and no other Designer window (progress, update note) is open &mdash; so this doesn't depend on how fast the PC is. If Designer never looks ready within 45 s, F8 is pressed anyway, the log says what it was waiting for, and a map of Designer's windows is saved to <code>designer-ui-dump.txt</code>.</td></tr>
+  <tr><td>Check Cores over the network</td><td><b>Only when I ask</b> (default), or every 30 min / 60 min / 4 hours. Each check shows in the Core's event log; listening on LAN A doesn't.</td></tr>
+  <tr><td>Core login</td><td>Set, change or remove the Core Manager login.</td></tr>
+  <tr><td>Listen for Q-SYS devices</td><td>Turns the Devices tab's live discovery on or off.</td></tr>
+  <tr><td>Automatically add Cores heard on LAN A</td><td>On by default. Adds Cores in your LAN A range that aren't in your list (not emulators, not ones you removed). <b>Allow them again</b> clears the removed list.</td></tr>
+  <tr><td>Also find PTZ-IP cameras</td><td>Off by default. Adds the older PTZ-IP cameras to the Devices tab (asks the network only while the Devices tab is open, every 5 min).</td></tr>
+  <tr><td>LAN A network</td><td>Your AV network's range, e.g. <code>192.168.0.0/19</code>. <b>Leave blank to detect it automatically.</b> Picks the network card to listen on, and sorts addresses into the LAN A / LAN B columns.</td></tr>
+  <tr><td>Shared Core list folder</td><td>Blank = this PC only. A shared folder lets a team use one list (see <a href="#shared">Sharing</a>).</td></tr>
+  <tr><td>Extra Designer folders</td><td>Only if Designer is installed somewhere unusual. Normal installs are found automatically (Program Files and the installed-programs list). Separate several folders with <code>;</code></td></tr>
+  <tr><td>Window close button</td><td>Keep running in the tray, or exit.</td></tr>
+  <tr><td>Start with Windows</td><td>Adds a shortcut to your Startup folder that starts the launcher in the tray.</td></tr>
+</table>
+
+<h2 id="files">Files and where they live</h2>
+<table>
+  <tr><th>File</th><th>What it is</th></tr>
+  <tr><td>QSysLauncher.ps1</td><td>The program (wherever you keep it).</td></tr>
+  <tr><td>QSysLauncher.ico</td><td>The app's icon (keep it next to the script).</td></tr>
+  <tr><td>%AppData%\QSysLauncher\systems.json</td><td>Your Core list and settings.</td></tr>
+  <tr><td>...\launcher.log</td><td>Everything the launcher did (starts fresh after ~1 MB).</td></tr>
+  <tr><td>...\backups\</td><td>Copies of Designer's hard-link files before each write.</td></tr>
+  <tr><td>...\api-probe.txt</td><td>Output of Tools &gt; Find firmware API.</td></tr>
+  <tr><td>...\designer-ui-dump.txt</td><td>Output of Tools &gt; Dump Designer UI.</td></tr>
+  <tr><td>%AppData%\QSC\HardLink.json</td><td>Designer's own hard-link file (shared by every version).</td></tr>
+</table>
+
+<h2 id="trouble">Troubleshooting</h2>
+<table>
+  <tr><th>Symptom</th><th>Try this</th></tr>
+  <tr><td>No tray icon</td><td>Click the <b>^</b> by the clock (see <a href="#tray">Tray icon</a>). Running the .cmd again also brings the window back.</td></tr>
+  <tr><td>Old version still running</td><td>Check the version in the title bar. Use File &gt; Exit, then start the .cmd again.</td></tr>
+  <tr><td>Devices tab is empty</td><td>Check Options &gt; LAN A network matches your AV card's address. Allow PowerShell through Windows Firewall on Private networks. Multicast must reach your PC (IGMP querier on the AV switches).</td></tr>
+  <tr><td>Firmware blank</td><td>Set a Core login (Tools &gt; Core login). Then right-click &gt; Check now. The Log shows the reason for each Core.</td></tr>
+  <tr><td>"Login rejected" for one Core</td><td>That Core uses a different login: right-click it &gt; Core login for this Core. If it still shows firmware, its Access Control is off and no login is needed.</td></tr>
+  <tr><td>A Designer version is missing</td><td>Installed somewhere unusual? Add its folder in Options &gt; Extra Designer folders.</td></tr>
+  <tr><td>"No response"</td><td>Nothing answers at that address on port 1710. If its LAN B address changed and you're not listening on LAN A, type the new address in; if it's gone, Remove it.</td></tr>
+  <tr><td>Hard-link changes "waiting"</td><td>Designer is open. They're written as soon as you close it.</td></tr>
+  <tr><td>F8 automation doesn't work</td><td>Open Designer's F8 dialog, then Tools &gt; Dump Designer UI, and send the dump file for adjustment.</td></tr>
+  <tr><td>A message says the launcher stopped</td><td>The error is also written to launcher.log &mdash; send that file.</td></tr>
+</table>
+
+</main>
+</div>
+</body>
+</html>
